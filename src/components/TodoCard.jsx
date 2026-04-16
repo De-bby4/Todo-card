@@ -4,15 +4,18 @@ export default function TodoCard() {
   const dueDate = new Date("2026-03-01T18:00:00");
   const [completed, setCompleted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState("");
+  const [isOverdue, setIsOverdue] = useState(false);
 
   useEffect(() => {
     const calcTime = () => {
       const diff = dueDate - new Date();
       if (diff <= 0) {
+        setIsOverdue(true);
         const h = Math.floor(Math.abs(diff) / (1000 * 60 * 60));
         if (h === 0) return "Due now!";
         return `Overdue by ${h} hour${h > 1 ? "s" : ""}`;
       }
+      setIsOverdue(false);
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       if (days === 0) return "Due today";
       if (days === 1) return "Due tomorrow";
@@ -92,7 +95,9 @@ export default function TodoCard() {
             <div aria-live="polite">
               <time
                 data-testid="test-todo-time-remaining"
-                className="text-[12px] font-medium text-red-700"
+                className={`text-[12px] font-medium ${
+                  isOverdue ? "text-red-700" : "text-gray-600"
+                }`}
               >
                 {timeRemaining}
               </time>
